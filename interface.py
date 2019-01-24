@@ -10,7 +10,7 @@ class SneakPeek(QDialog):
         mainLayout.addWidget(self.createTmsWidget)
         self.setLayout(mainLayout)
         self.setWindowTitle("Sneakpeek")
-        self.changeStyle('Fusion')
+        self.changeStyle('Fusion ')
 
     def changeStyle(self, styleName):
         QApplication.setStyle(QStyleFactory.create(styleName))
