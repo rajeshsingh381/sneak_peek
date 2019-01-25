@@ -1,5 +1,6 @@
 from PyQt5.QtWidgets import (QApplication, QLabel, QWidget, QTableWidget, QHBoxLayout, QGridLayout,
 QTabWidget, QSizePolicy, QStyleFactory, QDialog, QTableWidgetItem, QVBoxLayout, QGroupBox, QFormLayout, QLineEdit, QPushButton)
+from PyQt5 import QtCore
 from tms_assigned import Tms_task
 from outlook import Outlook_task
 
@@ -20,7 +21,6 @@ class SneakPeek(QDialog):
         tmsLayout = QHBoxLayout()
         tmsLayout.addWidget(self.TmsWidget)
         tms_wid.setLayout(tmsLayout)
-        tms_wid.adjustSize()
         outlookLayout = QHBoxLayout()
         outlookLayout.addWidget(self.OutlookWidget)
         outlook_wid.setLayout(outlookLayout)
@@ -31,7 +31,7 @@ class SneakPeek(QDialog):
         self.setLayout(mainLayout)
         self.setWindowTitle("Sneakpeek")
         self.changeStyle('Fusion')
-        self.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
+        self.resize(850, 400)
 
     def changeStyle(self, styleName):
         QApplication.setStyle(QStyleFactory.create(styleName))
@@ -47,15 +47,17 @@ class SneakPeek(QDialog):
         tableWidget = QTableWidget(len(tabIndexList), len(tabHeaderList))
 
         tableWidget.setHorizontalHeaderLabels(tabHeaderList)
-        tableWidget.verticalScrollBar        
+        
         for i in tabHeaderList:
             for j in tabIndexList:
                 tableWidget.setItem(j,tabHeaderList.index(i), QTableWidgetItem(str(output_df.loc[j,i])))
-
+        
+        tableWidget.resizeColumnsToContents()
         oulookhbox = QHBoxLayout()
         oulookhbox.setContentsMargins(5, 5, 5, 5)
         oulookhbox.addWidget(tableWidget)
         outlook.setLayout(oulookhbox)
+        
         self.OutlookWidget.addTab(outlook, 'Outlook events')
         self.OutlookWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         
@@ -75,13 +77,14 @@ class SneakPeek(QDialog):
         tabHeaderList = list(df.columns)
         tabIndexList = list(df.index)
         tableWidget = QTableWidget(len(tabIndexList), len(tabHeaderList))
-        
+        tableWidget.setHorizontalScrollBar = 0
         tableWidget.setHorizontalHeaderLabels(tabHeaderList)
         
         for i in tabHeaderList:
             for j in tabIndexList:
-
                 tableWidget.setItem(j,tabHeaderList.index(i), QTableWidgetItem(df.loc[j,i]))
+
+        tableWidget.resizeColumnsToContents()
         tmshbox = QHBoxLayout()
         tmshbox.setContentsMargins(5, 5, 5, 5)
         tmshbox.addWidget(tableWidget)
@@ -117,7 +120,7 @@ class LoginD(QDialog):
         SneakPeek.username = self.username.text()
         SneakPeek.password = self.password.text()
         super(LoginD, self).setVisible(0)
-       
+
     
 
 
@@ -127,6 +130,7 @@ if __name__ == '__main__':
 
     app = QApplication(sys.argv)
     app.processEvents()
+
     dialog = LoginD()
     dialog.exec_()
     if SneakPeek.my_ready_flag == 1:
