@@ -5,8 +5,8 @@ from dumper import dump
 
 class ShowJIRA():
     def __init__(self):
-        #jira = JIRA(basic_auth=(Tms_task.username, Tms_task.password),options = {'server': 'https://jira.sonusnet.com'}) 
-        jira = JIRA(basic_auth=('vramesh', 'YF23@blackwidow'),options = {'server': 'https://jira.sonusnet.com'}) 
+        jira = JIRA(basic_auth=(Tms_task.username, Tms_task.password),options = {'server': 'https://jira.sonusnet.com'}) 
+        #jira = JIRA(basic_auth=('vramesh', 'YF23@blackwidow'),options = {'server': 'https://jira.sonusnet.com'}) 
         keys = ('Summary','ID')
         myJira = dict.fromkeys(keys)
         all_issues = jira.search_issues('assignee=currentuser() AND status=OPEN') 
@@ -19,7 +19,6 @@ class ShowJIRA():
                 myJira['Summary'].append( issue.fields.summary)
                 myJira['ID'].append(issue)
 
-        print(myJira)
         self.issue = pd.DataFrame.from_dict(myJira)
 
     def getIssuDat(self):

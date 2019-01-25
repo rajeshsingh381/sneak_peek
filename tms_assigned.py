@@ -7,7 +7,7 @@ class Tms_task:
     username = 'vramesh'
     password = 'YF23@blackwidow'
     def __init__(self,username, password):
-        LOGIN_URL = 'http://127.0.0.1:8080/login/?next=/'
+        LOGIN_URL = 'http://10.70.56.134:8080/login/?next=/'
         self.client = requests.session()
 
         # Retrieve the CSRF token first
@@ -23,7 +23,7 @@ class Tms_task:
 
     def assigned_func(self):
         #######-------assigned by me--------######
-        assigned_by_me_URL = 'http://127.0.0.1:8080/review/assigned-by-me/'
+        assigned_by_me_URL = 'http://10.70.56.134:8080/review/assigned-by-me/'
         r =  self.client.get(assigned_by_me_URL)
         s = r.text
         reg_match = re.search('<table.*(\n.*)+\/table>', s)
@@ -35,7 +35,7 @@ class Tms_task:
             print ("couldn't fetch tms assigned by me table results")
 
         ########----------assigned to me-------------#########
-        assigned_to_me_URL = 'http://127.0.0.1:8080/review/assigned-to-me/'
+        assigned_to_me_URL = 'http://10.70.56.134:8080/review/assigned-to-me/'
         r1 =  self.client.get(assigned_to_me_URL)
         s1 = r1.text
         reg_match1 = re.search('<table.*(\n.*)+\/table>', s1)
@@ -46,7 +46,7 @@ class Tms_task:
         else:
             print ("couldn't fetch tms assigned to me table results")
 
-        my_bistq_jobqueue_url = 'http://127.0.0.1:8080/bistq/jobqueue/'
+        my_bistq_jobqueue_url = 'http://10.70.56.134:8080/bistq/jobqueue/'
         r1 =  self.client.get(my_bistq_jobqueue_url)
         s1 = r1.text
         reg_match1 = re.search('<table.*(\n.*)+\/table>', s1)

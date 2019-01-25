@@ -91,7 +91,7 @@ class SneakPeek(QDialog):
         self.ResWidget = QTabWidget()
 
         rrt = QWidget()
-        tabHeaderList = ['resourceName', 'startDate', 'endDate']
+        tabHeaderList = ['Resource', 'StartDate', 'EndDate']
         tabIndexList = list(output_df.index)
         tableWidget = QTableWidget(len(tabIndexList), len(tabHeaderList))
         tableWidget.setHorizontalHeaderLabels(tabHeaderList)
@@ -104,7 +104,7 @@ class SneakPeek(QDialog):
         reshbox.setContentsMargins(5, 5, 5, 5)
         reshbox.addWidget(tableWidget)
         rrt.setLayout(reshbox)
-        self.ResWidget.addTab(rrt, 'Resource Reservation for 2 weeks')
+        self.ResWidget.addTab(rrt, 'Showing Resource Reservation for 2 weeks')
         self.ResWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
 
 

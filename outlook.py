@@ -40,7 +40,7 @@ class Outlook_task:
                 calcTable['Start'] = [calcTable['Start'], appointmentItem.Start.Format(OUTLOOK_FORMAT)]
                 calcTable['Duration(Minutes)'] = [calcTable['Duration(Minutes)'], appointmentItem.Duration]
             
-        dfs = pd.DataFrame.from_dict(calcTable)
+        dfs = pd.DataFrame.from_dict([calcTable])
 
         return dfs
        
