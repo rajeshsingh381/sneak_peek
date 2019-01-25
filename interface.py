@@ -3,21 +3,27 @@ QTabWidget, QSizePolicy, QStyleFactory, QDialog, QTableWidgetItem, QVBoxLayout, 
 from PyQt5 import QtCore
 from tms_assigned import Tms_task
 from outlook import Outlook_task
+from showjira import  ShowJIRA
 
 class SneakPeek(QDialog):
     my_ready_flag = 0
-    username = None
-    password = None
     def __init__(self, parent=None):
         super(SneakPeek, self).__init__(parent)
         mainLayout = QHBoxLayout()
         main_wid = QTabWidget()
 
+        jira_wid = QWidget()
         tms_wid = QWidget()
         outlook_wid = QWidget()
 
+        self.createJiraWidget()
         self.createTmsWidget()
         self.createOutlookWidget()
+
+        jiraLayout = QHBoxLayout()
+        jiraLayout.addWidget(self.JiraWidget)
+        jira_wid.setLayout(jiraLayout)
+
         tmsLayout = QHBoxLayout()
         tmsLayout.addWidget(self.TmsWidget)
         tms_wid.setLayout(tmsLayout)
@@ -25,6 +31,7 @@ class SneakPeek(QDialog):
         outlookLayout.addWidget(self.OutlookWidget)
         outlook_wid.setLayout(outlookLayout)
 
+        main_wid.addTab(jira_wid,"JIRA")
         main_wid.addTab(tms_wid, "TMS")
         main_wid.addTab(outlook_wid, "OUTLOOK")
         mainLayout.addWidget(main_wid)
@@ -35,6 +42,32 @@ class SneakPeek(QDialog):
 
     def changeStyle(self, styleName):
         QApplication.setStyle(QStyleFactory.create(styleName))
+    def createJiraWidget(self):
+        jro = ShowJIRA()
+        output_df = jro.getIssuDat()
+        self.JiraWidget = QTabWidget()
+
+        jira = QWidget()
+        tabHeaderList = ['JIRA assigned']
+        tabIndexList = list(output_df.index)
+        tableWidget = QTableWidget(len(tabIndexList),len(tabHeaderList))
+
+        tableWidget.setHorizontalHeaderLabels(tabHeaderList)
+        for i in tabHeaderList:
+            for j in tabIndexList:
+                print(type(output_df.loc[j,0]))
+                tableWidget.setItem(j,tabHeaderList.index(i), QTableWidgetItem(str(output_df.loc[j,0])))
+        
+        tableWidget.resizeColumnsToContents()
+
+        jirahbox = QHBoxLayout()
+        jirahbox.setContentsMargins(5,5,5,5)
+        jirahbox.addWidget(tableWidget)
+        jira.setLayout(jirahbox)
+
+        self.JiraWidget.addTab(jira,'Assigned JIRA')
+        #self.JiraWidget.setSizePolicy()
+        
         
     def createOutlookWidget(self):
         olo = Outlook_task()
@@ -62,7 +95,7 @@ class SneakPeek(QDialog):
         self.OutlookWidget.setSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         
     def createTmsWidget(self):
-        tmo = Tms_task(self.username, self.password)
+        tmo = Tms_task(Tms_task.username, Tms_task.password)
         
         output_df = tmo.assigned_func()
         self.TmsWidget = QTabWidget()
@@ -117,8 +150,8 @@ class LoginD(QDialog):
     def closeEvent(self, evnt):
         
         SneakPeek.my_ready_flag =1
-        SneakPeek.username = self.username.text()
-        SneakPeek.password = self.password.text()
+        Tms_task.username = self.username.text()
+        Tms_task.password = self.password.text()
         super(LoginD, self).setVisible(0)
 
     
