@@ -1,6 +1,6 @@
 from win32com.client import Dispatch
 from tabulate import tabulate
-import datetime ,timedelta
+from datetime import datetime, timedelta
 import pdb
 import pandas as pd
 class Outlook_task:
@@ -13,11 +13,11 @@ class Outlook_task:
         appointments = ns.GetDefaultFolder(9).Items
         appointments.Sort("[Start]")
         appointments.IncludeRecurrences = "True"
-        today = datetime.datetime.today()
-        begin = today.date().strftime("%m/%d/%Y")
-        tomorrow= datetime.timedelta( days= 100)+today
+        today = datetime.now()
+        begin = today.date().strftime("%d/%m/%Y")
+        tomorrow=timedelta(days=10)+today
 
-        end = tomorrow.date().strftime("%m/%d/%Y")
+        end = tomorrow.date().strftime("%d/%m/%Y")
         appointments = appointments.Restrict("[Start] >= '" +begin+ "' AND [END] <= '" +end+ "'")
         events={'Start':[],'Subject':[],'Duration':[]}
         keys = ('Title', 'Organizer', 'Start', 'Duration(Minutes)')

@@ -1,0 +1,7 @@
+pip install pyqt5
+pip install pandas
+pip install tabulate
+pip install jira
+pip install pypiwin32
+pip install lxml
+pip install requests
