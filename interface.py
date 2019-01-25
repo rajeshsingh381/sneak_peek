@@ -1,57 +1,74 @@
 from PyQt5.QtWidgets import (QApplication, QLabel, QWidget, QTableWidget, QHBoxLayout, QGridLayout,
-QTabWidget, QSizePolicy, QStyleFactory, QDialog, QTableWidgetItem, QVBoxLayout, QGroupBox, QFormLayout, QLineEdit, QPushButton)
+QTabWidget, QSizePolicy, QStyleFactory, QDialog, QTableWidgetItem, QVBoxLayout, QGroupBox, QFormLayout
+, QLineEdit, QPushButton,QMainWindow, QStackedWidget)
 from PyQt5.QtGui import QDesktopServices
+
 from PyQt5 import QtCore
 from tms_assigned import Tms_task
 from outlook import Outlook_task
 from showjira import  ShowJIRA
 from rrt import showRes
 
-class SneakPeek(QDialog):
+
+class SneakPeek(QMainWindow):
     my_ready_flag = 0
     def __init__(self, parent=None):
         super(SneakPeek, self).__init__(parent)
-        mainLayout = QHBoxLayout()
-        main_wid = QTabWidget()
-        jira_wid = QWidget()
-        tms_wid = QWidget()
-        outlook_wid = QWidget()
-        res_wid = QWidget()
+        self.resize(250, 100)
+        self.mainLayout = QHBoxLayout()
 
-        self.createJiraWidget()
+        self.wid_stack = QStackedWidget()
+        self.formGroupBox = QGroupBox("Enter one time credentials")
+        self.wid_stack.addWidget(self.formGroupBox)
+        self.main_wid = QTabWidget()
+        self.wid_stack.addWidget(self.main_wid)
+        self.wid_stack.setCurrentWidget(self.formGroupBox)
+        
+        self.createLoginWidget()
+
+    def createSneakpeek(self):
+        
+        self.jira_wid = QWidget()
+        self.tms_wid = QWidget()
+        self.outlook_wid = QWidget()
+        self.res_wid = QWidget()
+
         self.createTmsWidget()
+        self.createJiraWidget()
         self.createOutlookWidget()
         self.createResWidget()
 
         jiraLayout = QHBoxLayout()
         jiraLayout.addWidget(self.JiraWidget)
-        jira_wid.setLayout(jiraLayout)
+        self.jira_wid.setLayout(jiraLayout)
 
         tmsLayout = QHBoxLayout()
         tmsLayout.addWidget(self.TmsWidget)
-        tms_wid.setLayout(tmsLayout)
+        self.tms_wid.setLayout(tmsLayout)
 
         outlookLayout = QHBoxLayout()
         outlookLayout.addWidget(self.OutlookWidget)
-        outlook_wid.setLayout(outlookLayout)
+        self.outlook_wid.setLayout(outlookLayout)
 
         rrtlayout = QHBoxLayout()
         rrtlayout.addWidget(self.ResWidget)
-        res_wid.setLayout(rrtlayout)
+        self.res_wid.setLayout(rrtlayout)
 
-        main_wid.addTab(jira_wid,"JIRA")
-        main_wid.addTab(tms_wid, "TMS")
-        main_wid.addTab(outlook_wid, "OUTLOOK")
-        main_wid.addTab(res_wid, "RRT")
-
-        mainLayout.addWidget(main_wid)
-        self.setLayout(mainLayout)
+        self.main_wid.addTab(self.jira_wid,"JIRA")
+        self.main_wid.addTab(self.tms_wid, "TMS")
+        self.main_wid.addTab(self.outlook_wid, "OUTLOOK")
+        self.main_wid.addTab(self.res_wid, "RRT")
+        self.wid_stack.setCurrentWidget(self.main_wid)
+        self.resize(900, 400)
+        # self.mainLayout.addWidget(self.main_wid)
+        # self.setLayout(self.mainLayout)
         self.setWindowTitle("Sneakpeek")
         self.changeStyle('Macintosh')
+
         # sshFile="darkornage.stylesheet"
         # with open(sshFile,"r") as fh:
         #     self.setStyleSheet(fh.read())
-        self.resize(850, 400)
+        
 
     def changeStyle(self, styleName):
         QApplication.setStyle(QStyleFactory.create(styleName))
@@ -167,41 +184,37 @@ class SneakPeek(QDialog):
         tms.setLayout(tmshbox)
         return tms
 
-class LoginD(QDialog):
-    def __init__(self,parent=None):
-        super(LoginD, self).__init__()
-        self.createFormGroupBox( )
+    def createLoginWidget(self):
+        #mainLayout = QVBoxLayout()
         
-        mainLayout = QVBoxLayout()
-        mainLayout.addWidget(self.formGroupBox)
-        self.setLayout(mainLayout)
-        #self.changeStyle('Plastique')
-        sshFile="darkornage.stylesheet"
-        with open(sshFile,"r") as fh:
-            self.setStyleSheet(fh.read())
+        # self.setLayout(mainLayout)
+        # #self.changeStyle('Plastique')
+        # sshFile="darkornage.stylesheet"
+        # with open(sshFile,"r") as fh:
+        #     self.setStyleSheet(fh.read())
         
-        self.setWindowTitle("TMS Login")
-    
-    def createFormGroupBox(self):
-        self.formGroupBox = QGroupBox("Enter one time credentials")
+        self.setWindowTitle("SneakPeek")
+
+        
         layout = QFormLayout()
 
         self.username = QLineEdit()
         self.password = QLineEdit()
-        submit = QPushButton("Submit")
-        submit.clicked.connect(self.closeEvent)
+        self.submit = QPushButton("Submit")
+        self.submit.clicked.connect(self.closeLogin)
         self.password.setEchoMode(QLineEdit.Password)
         layout.addRow(QLabel("Name:"), self.username)
         layout.addRow(QLabel("Password:"), self.password)
-        layout.addRow(submit)
+        layout.addRow(self.submit)
         self.formGroupBox.setLayout(layout)
-    def closeEvent(self, evnt):
-        SneakPeek.my_ready_flag =1
+        self.setCentralWidget(self.wid_stack)
+        
+
+    def closeLogin(self):
         Tms_task.username = self.username.text()
         Tms_task.password = self.password.text()
-        super(LoginD, self).setVisible(0)
-
-    
+        self.submit.setEnabled(False)
+        self.createSneakpeek()
 
 
 
@@ -209,12 +222,8 @@ if __name__ == '__main__':
     import sys
 
     app = QApplication(sys.argv)
+    dialog1 = SneakPeek()
     app.processEvents()
-
-    dialog = LoginD()
-    dialog.exec_()
-    if SneakPeek.my_ready_flag == 1:
-        dialog1 = SneakPeek()
-        dialog1.show()
+    dialog1.show()
     
     sys.exit(app.exec_())

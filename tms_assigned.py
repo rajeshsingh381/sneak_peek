@@ -4,8 +4,8 @@ import re
 import pandas as pd
 
 class Tms_task:
-    username = 'vramesh'
-    password = 'YF23@blackwidow'
+    username = ''
+    password = ''
     def __init__(self,username, password):
         LOGIN_URL = 'http://10.70.56.134:8080/login/?next=/'
         self.client = requests.session()
