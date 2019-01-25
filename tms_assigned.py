@@ -24,34 +24,24 @@ class Tms_task:
         assigned_by_me_URL = 'https://tms-inba.rbbn.com/review/assigned-by-me/'
         r =  self.client.get(assigned_by_me_URL)
         s = r.text
-        #print (r.text)
         reg_match = re.search('<table.*(\n.*)+\/table>', s)
+        dfs = []
         if reg_match:
             found = reg_match.group(0)
-        #print (found)
-
-        dfs = pd.read_html(found)
-        print("assigned by me")
-        print(dfs)
+            dfs = pd.read_html(found)
+        else:
+            print ("couldn't fetch tms assigned by me table results")
 
         ########----------assigned to me-------------#########
         assigned_to_me_URL = 'https://tms-inba.rbbn.com/review/assigned-to-me/'
         r1 =  self.client.get(assigned_to_me_URL)
         s1 = r1.text
-        #print (r.text)
         reg_match1 = re.search('<table.*(\n.*)+\/table>', s1)
         if reg_match1:
             found1 = reg_match1.group(0)
-        #print (found)
+            dfs1 = pd.read_html(found1)
+            dfs.append(dfs1[0])
+        else:
+            print ("couldn't fetch tms assigned to me table results")
 
-        dfs1 = pd.read_html(found1)
-        print("assigned to me")
-        print(dfs1)
-        return [dfs, dfs1]
-
-
-
-
-#tmo = Tms_task("username", "password")
-#ret = tmo.assigned_func()
-#print (ret)
+        return dfs
